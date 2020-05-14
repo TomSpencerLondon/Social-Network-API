@@ -1,8 +1,7 @@
 package com.codurance.socialnetworkapi;
 
 import com.codurance.social_network.domain.entities.Post;
-import com.codurance.social_network.domain.repositories.InMemoryFollowSubscriptionRepository;
-import com.codurance.social_network.domain.repositories.InMemoryPostRepository;
+import com.codurance.social_network.domain.repositories.FollowSubscriptionRepository;
 import com.codurance.social_network.domain.repositories.PostRepository;
 import com.codurance.social_network.domain.services.Clock;
 import com.codurance.social_network.domain.services.FollowSubscriptionService;
@@ -10,35 +9,22 @@ import com.codurance.social_network.domain.services.PostService;
 import com.codurance.social_network.domain.services.SocialNetworkAPI;
 import java.util.List;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class BlogController {
+public class SocialNetworkAPIController {
 
   private SocialNetworkAPI socialNetworkAPI;
 
-  public BlogController() {
+  public SocialNetworkAPIController() {
 
-    InMemoryFollowSubscriptionRepository inMemoryFollowRepository = new InMemoryFollowSubscriptionRepository();
-    PostRepository postRepository = new InMemoryPostRepository();
+    FollowSubscriptionRepository inMemoryFollowRepository = new MongoDBFollowRepository();
+    PostRepository postRepository = new MongoDBPostRepository();
     Clock clock = new Clock();
     PostService postService = new PostService(inMemoryFollowRepository, postRepository, clock);
     FollowSubscriptionService followSubscriptionService = new FollowSubscriptionService(inMemoryFollowRepository);
     socialNetworkAPI = new SocialNetworkAPI(postService, followSubscriptionService);
-  }
-
-  @RequestMapping("/")
-  public String index() {
-    return "Connected to the BlogController!";
-  }
-
-  @RequestMapping("/sayhello")
-  public String sayHello(String name) {
-
-    if(name == null || name.isEmpty()) {
-      return "Sorry, I don't know your name";
-    }
-    return String.format("Hello %s!", name);
   }
 
   @RequestMapping("/post")
@@ -46,7 +32,13 @@ public class BlogController {
     socialNetworkAPI.createPost(name, message);
   }
 
-  @RequestMapping("wall")
+  @RequestMapping(path = "/read", produces = "application/json; charset=UTF-8")
+  @ResponseBody
+  public List<Post> Read(String name) {
+    return socialNetworkAPI.getPostsFor(name);
+  }
+
+  @RequestMapping(path = "/wall", produces = "application/json; charset=UTF-8")
   public List<Post> Wall(String userName) {
 
     return socialNetworkAPI.getWallPostsFor(userName);
