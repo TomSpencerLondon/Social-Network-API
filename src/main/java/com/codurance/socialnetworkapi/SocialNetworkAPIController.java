@@ -7,6 +7,8 @@ import com.codurance.social_network.domain.services.Clock;
 import com.codurance.social_network.domain.services.FollowSubscriptionService;
 import com.codurance.social_network.domain.services.PostService;
 import com.codurance.social_network.domain.services.SocialNetworkAPI;
+
+import java.net.UnknownHostException;
 import java.util.List;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -17,7 +19,7 @@ public class SocialNetworkAPIController {
 
   private SocialNetworkAPI socialNetworkAPI;
 
-  public SocialNetworkAPIController() {
+  public SocialNetworkAPIController() throws UnknownHostException {
 
     FollowSubscriptionRepository inMemoryFollowRepository = new MongoDBFollowRepository();
     PostRepository postRepository = new MongoDBPostRepository();
