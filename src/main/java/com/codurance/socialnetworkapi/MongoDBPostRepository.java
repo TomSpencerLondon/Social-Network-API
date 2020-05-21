@@ -2,18 +2,16 @@ package com.codurance.socialnetworkapi;
 
 import com.codurance.social_network.domain.entities.Post;
 import com.codurance.social_network.domain.repositories.PostRepository;
-import com.mongodb.Function;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
-import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import org.bson.Document;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import org.bson.Document;
-import org.bson.conversions.Bson;
 
 public class MongoDBPostRepository implements PostRepository {
 

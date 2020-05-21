@@ -19,28 +19,33 @@ public class SocialNetworkAPIController {
 
   public SocialNetworkAPIController() {
 
-    FollowSubscriptionRepository inMemoryFollowRepository = new MongoDBFollowRepository();
+    FollowSubscriptionRepository followRepository = new MongoDBFollowRepository();
     PostRepository postRepository = new MongoDBPostRepository();
     Clock clock = new Clock();
-    PostService postService = new PostService(inMemoryFollowRepository, postRepository, clock);
-    FollowSubscriptionService followSubscriptionService = new FollowSubscriptionService(inMemoryFollowRepository);
+    PostService postService = new PostService(followRepository, postRepository, clock);
+    FollowSubscriptionService followSubscriptionService = new FollowSubscriptionService(followRepository);
     socialNetworkAPI = new SocialNetworkAPI(postService, followSubscriptionService);
   }
 
   @RequestMapping("/post")
-  public void Post(String name, String message) {
+  public void post(String name, String message) {
     socialNetworkAPI.createPost(name, message);
   }
 
   @RequestMapping(path = "/read", produces = "application/json; charset=UTF-8")
   @ResponseBody
-  public List<Post> Read(String name) {
+  public List<Post> read(String name) {
     return socialNetworkAPI.getPostsFor(name);
   }
 
   @RequestMapping(path = "/wall", produces = "application/json; charset=UTF-8")
-  public List<Post> Wall(String userName) {
+  public List<Post> wall(String userName) {
 
     return socialNetworkAPI.getWallPostsFor(userName);
+  }
+
+  @RequestMapping(path = "/follow", produces = "application/json; charset=UTF-8")
+  public void follow(String follower, String followed){
+    socialNetworkAPI.save(follower, followed);
   }
 }
