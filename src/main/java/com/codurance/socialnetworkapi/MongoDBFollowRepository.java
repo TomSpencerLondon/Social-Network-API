@@ -13,8 +13,8 @@ import org.bson.Document;
 public class MongoDBFollowRepository implements
     FollowSubscriptionRepository {
 
-  public static final String FOLLOWED = "followed";
-  private static final String FOLLOWER = "follower";
+  public static final String USER = "followed";
+  private static final String FOLLOWED = "follower";
   private final MongoClient mongoClient;
 
   public MongoDBFollowRepository() {
@@ -29,13 +29,13 @@ public class MongoDBFollowRepository implements
   }
 
   private MongoCollection<Document> getFollowSubscriptionsCollection() {
-    return mongoClient.getDatabase("SocialNetwork").getCollection("follow");
+    return mongoClient.getDatabase("SocialNetwork").getCollection("followSubscription");
   }
 
   private Document convertFollowSubscriptionToDocument(FollowSubscription followSubscription) {
     Document subscriptionDocument = new Document();
-    subscriptionDocument.append(FOLLOWED, followSubscription.followed);
-    subscriptionDocument.append(FOLLOWER, followSubscription.user);
+    subscriptionDocument.append(USER, followSubscription.followed);
+    subscriptionDocument.append(FOLLOWED, followSubscription.user);
     return subscriptionDocument;
   }
 
@@ -45,17 +45,25 @@ public class MongoDBFollowRepository implements
     for(Document d: getFollowSubscriptionsCollection().find()){
       followSubscriptions.add(convertDocumentToFollowSubscription(d));
     }
+    return followSubscriptions;
   }
 
   private FollowSubscription convertDocumentToFollowSubscription(Document document) {
     return new FollowSubscription(
-        new User(document.getString(FOLLOWED)),
-        new User(document.getString(FOLLOWER))
+        new User(document.getString(USER)),
+        new User(document.getString(FOLLOWED))
     );
   }
 
   @Override
-  public List<FollowSubscription> getSubscriptionsFor(String s) {
-    return null;
+  public List<FollowSubscription> getSubscriptionsFor(String userName) {
+    Document query = new Document();
+    query.append(USER, userName);
+    ArrayList<FollowSubscription> followSubscriptions = new ArrayList<>();
+    for(Document d: getFollowSubscriptionsCollection().find(query))
+    {
+      followSubscriptions.add(convertDocumentToFollowSubscription(d));
+    }
+    return followSubscriptions;
   }
 }
