@@ -2,6 +2,7 @@ package com.codurance.socialnetworkapi;
 
 import com.codurance.social_network.domain.entities.Post;
 import com.codurance.social_network.domain.repositories.FollowSubscriptionRepository;
+import com.codurance.social_network.domain.repositories.InMemoryFollowSubscriptionRepository;
 import com.codurance.social_network.domain.repositories.PostRepository;
 import com.codurance.social_network.domain.services.Clock;
 import com.codurance.social_network.domain.services.FollowSubscriptionService;
