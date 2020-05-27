@@ -40,9 +40,9 @@ public class SocialNetworkAPIController {
   }
 
   @RequestMapping(path = "/wall", produces = "application/json; charset=UTF-8")
-  public List<Post> wall(String userName) {
+  public List<Post> wall(String name) {
 
-    return socialNetworkAPI.getWallPostsFor(userName);
+    return socialNetworkAPI.getWallPostsFor(name);
   }
 
   @RequestMapping(path = "/follow", produces = "application/json; charset=UTF-8")

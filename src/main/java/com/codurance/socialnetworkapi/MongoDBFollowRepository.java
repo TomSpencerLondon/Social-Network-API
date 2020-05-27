@@ -13,8 +13,8 @@ import org.bson.Document;
 public class MongoDBFollowRepository implements
     FollowSubscriptionRepository {
 
-  public static final String USER = "followed";
-  private static final String FOLLOWED = "follower";
+  public static final String USER = "follower";
+  private static final String FOLLOWED = "followed";
   private final MongoClient mongoClient;
 
   public MongoDBFollowRepository() {
@@ -34,8 +34,8 @@ public class MongoDBFollowRepository implements
 
   private Document convertFollowSubscriptionToDocument(FollowSubscription followSubscription) {
     Document subscriptionDocument = new Document();
-    subscriptionDocument.append(USER, followSubscription.followed);
-    subscriptionDocument.append(FOLLOWED, followSubscription.user);
+    subscriptionDocument.append(USER, followSubscription.user.name);
+    subscriptionDocument.append(FOLLOWED, followSubscription.followed.name);
     return subscriptionDocument;
   }
 
