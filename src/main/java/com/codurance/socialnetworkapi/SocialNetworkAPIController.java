@@ -14,6 +14,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -46,17 +47,17 @@ public class SocialNetworkAPIController {
     socialNetworkAPI.createPost(name, message);
   }
 
-  @GetMapping(path = "/read", produces = "application/json; charset=UTF-8")
+  @GetMapping(path = "/read", produces = MediaType.APPLICATION_JSON_VALUE)
   public List<Post> read(@RequestParam("name") @NotBlank String name) {
     return socialNetworkAPI.getPostsFor(name);
   }
 
-  @GetMapping(path = "/wall", produces = "application/json; charset=UTF-8")
+  @GetMapping(path = "/wall", produces = MediaType.APPLICATION_JSON_VALUE)
   public List<Post> wall(@RequestParam("name") @NotBlank String name) {
     return socialNetworkAPI.getWallPostsFor(name);
   }
 
-  @PostMapping(path = "/follow", produces = "application/json; charset=UTF-8")
+  @PostMapping(path = "/follow", produces = MediaType.APPLICATION_JSON_VALUE)
   public void follow(@RequestParam("follower") @NotBlank String follower, @RequestParam("followed") @NotBlank String followed){
     socialNetworkAPI.save(follower, followed);
   }
