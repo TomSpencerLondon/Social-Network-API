@@ -17,6 +17,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -39,22 +41,22 @@ public class SocialNetworkAPIController {
     socialNetworkAPI = new SocialNetworkAPI(postService, followSubscriptionService);
   }
 
-  @RequestMapping("/post")
+  @PostMapping("/post")
   public void post(@RequestParam("name") @NotBlank String name, @RequestParam("message") @NotBlank String message) {
     socialNetworkAPI.createPost(name, message);
   }
 
-  @RequestMapping(path = "/read", produces = "application/json; charset=UTF-8")
+  @GetMapping(path = "/read", produces = "application/json; charset=UTF-8")
   public List<Post> read(@RequestParam("name") @NotBlank String name) {
     return socialNetworkAPI.getPostsFor(name);
   }
 
-  @RequestMapping(path = "/wall", produces = "application/json; charset=UTF-8")
+  @GetMapping(path = "/wall", produces = "application/json; charset=UTF-8")
   public List<Post> wall(@RequestParam("name") @NotBlank String name) {
     return socialNetworkAPI.getWallPostsFor(name);
   }
 
-  @RequestMapping(path = "/follow", produces = "application/json; charset=UTF-8")
+  @PostMapping(path = "/follow", produces = "application/json; charset=UTF-8")
   public void follow(@RequestParam("follower") @NotBlank String follower, @RequestParam("followed") @NotBlank String followed){
     socialNetworkAPI.save(follower, followed);
   }
