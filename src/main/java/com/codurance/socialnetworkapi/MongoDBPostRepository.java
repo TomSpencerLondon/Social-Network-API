@@ -19,6 +19,7 @@ public class MongoDBPostRepository implements PostRepository {
   public static final String NAME_KEY = "name";
   public static final String TIME_POSTED_KEY = "timePosted";
   private final MongoClient mongoClient;
+  private PostConverter postConverter = new PostConverter();
 
   public MongoDBPostRepository() {
     mongoClient = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
@@ -26,16 +27,8 @@ public class MongoDBPostRepository implements PostRepository {
 
   @Override
   public void save(Post post) {
-    Document postDocument = convertPostToDocument(post);
+    Document postDocument = postConverter.convertPostToDocument(post);
     getPostsCollection().insertOne(postDocument);
-  }
-
-  private Document convertPostToDocument(Post post) {
-    Document postDocument = new Document();
-    postDocument.append(MESSAGE_KEY, post.getMessage());
-    postDocument.append(NAME_KEY, post.getName());
-    postDocument.append(TIME_POSTED_KEY, post.getTimePosted());
-    return postDocument;
   }
 
   private MongoCollection<Document> getPostsCollection() {
@@ -47,21 +40,10 @@ public class MongoDBPostRepository implements PostRepository {
     ArrayList<Post> posts = new ArrayList<>();
     for(Document d: getPostsCollection().find())
     {
-      posts.add(convertDocumentToPost(d));
+      posts.add(postConverter.convertDocumentToPost(d));
     }
 
     return posts;
-  }
-
-  private Post convertDocumentToPost(Document document) {
-    return new Post(
-        document.getString(MESSAGE_KEY),
-        getLocalDateTime(document.getDate(TIME_POSTED_KEY)),
-        document.getString(NAME_KEY));
-  }
-
-  private LocalDateTime getLocalDateTime(Date date) {
-    return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
   }
 
   @Override
@@ -71,9 +53,10 @@ public class MongoDBPostRepository implements PostRepository {
     ArrayList<Post> posts = new ArrayList<>();
     for(Document d: getPostsCollection().find(query))
     {
-      posts.add(convertDocumentToPost(d));
+      posts.add(postConverter.convertDocumentToPost(d));
     }
 
     return posts;
   }
+
 }
