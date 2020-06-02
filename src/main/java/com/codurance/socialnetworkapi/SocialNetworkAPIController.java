@@ -8,6 +8,7 @@ import com.codurance.social_network.domain.services.Clock;
 import com.codurance.social_network.domain.services.FollowSubscriptionService;
 import com.codurance.social_network.domain.services.PostService;
 import com.codurance.social_network.domain.services.SocialNetworkAPI;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.validation.constraints.NotBlank;
@@ -59,6 +60,15 @@ public class SocialNetworkAPIController {
 
   @PostMapping(path = "/follow", produces = MediaType.APPLICATION_JSON_VALUE)
   public void follow(@RequestParam("follower") @NotBlank String follower, @RequestParam("followed") @NotBlank String followed){
+    if(follower.equals(followed)){
+      throw new DuplicateFollowerException();
+    }
     socialNetworkAPI.save(follower, followed);
+  }
+
+  @ExceptionHandler(DuplicateFollowerException.class)
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public List<String> handleDuplicateFollower(DuplicateFollowerException exception){
+    return Collections.singletonList(exception.getMessage());
   }
 }
