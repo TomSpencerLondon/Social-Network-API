@@ -1,7 +1,6 @@
 package com.codurance.socialnetworkapi;
 
 import com.codurance.social_network.domain.entities.FollowSubscription;
-import com.codurance.social_network.domain.entities.User;
 import com.codurance.social_network.domain.repositories.FollowSubscriptionRepository;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientURI;
@@ -16,6 +15,7 @@ public class MongoDBFollowRepository implements
   public static final String USER = "follower";
   private static final String FOLLOWED = "followed";
   private final MongoClient mongoClient;
+  private FollowConverter followSubscriptionConverter = new FollowConverter();
 
   public MongoDBFollowRepository() {
     mongoClient = new MongoClient(new MongoClientURI("mongodb://localhost:27017"));
@@ -23,7 +23,7 @@ public class MongoDBFollowRepository implements
 
   @Override
   public void save(FollowSubscription followSubscription) {
-    Document followSubscriptionDocument = convertFollowSubscriptionToDocument(followSubscription);
+    Document followSubscriptionDocument = followSubscriptionConverter.convertFollowSubscriptionToDocument(followSubscription);
     getFollowSubscriptionsCollection().insertOne(followSubscriptionDocument);
 
   }
@@ -32,27 +32,13 @@ public class MongoDBFollowRepository implements
     return mongoClient.getDatabase("SocialNetwork").getCollection("followSubscription");
   }
 
-  private Document convertFollowSubscriptionToDocument(FollowSubscription followSubscription) {
-    Document subscriptionDocument = new Document();
-    subscriptionDocument.append(USER, followSubscription.user.name);
-    subscriptionDocument.append(FOLLOWED, followSubscription.followed.name);
-    return subscriptionDocument;
-  }
-
   @Override
   public List<FollowSubscription> fetch() {
     ArrayList<FollowSubscription> followSubscriptions = new ArrayList<>();
     for(Document d: getFollowSubscriptionsCollection().find()){
-      followSubscriptions.add(convertDocumentToFollowSubscription(d));
+      followSubscriptions.add(followSubscriptionConverter.convertDocumentToFollowSubscription(d));
     }
     return followSubscriptions;
-  }
-
-  private FollowSubscription convertDocumentToFollowSubscription(Document document) {
-    return new FollowSubscription(
-        new User(document.getString(USER)),
-        new User(document.getString(FOLLOWED))
-    );
   }
 
   @Override
@@ -62,7 +48,7 @@ public class MongoDBFollowRepository implements
     ArrayList<FollowSubscription> followSubscriptions = new ArrayList<>();
     for(Document d: getFollowSubscriptionsCollection().find(query))
     {
-      followSubscriptions.add(convertDocumentToFollowSubscription(d));
+      followSubscriptions.add(followSubscriptionConverter.convertDocumentToFollowSubscription(d));
     }
     return followSubscriptions;
   }
