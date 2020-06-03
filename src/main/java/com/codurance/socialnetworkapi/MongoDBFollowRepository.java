@@ -24,8 +24,8 @@ public class MongoDBFollowRepository implements
   @Override
   public void save(FollowSubscription followSubscription) {
     Document followSubscriptionDocument = followSubscriptionConverter.convertFollowSubscriptionToDocument(followSubscription);
-    getFollowSubscriptionsCollection().insertOne(followSubscriptionDocument);
 
+    getFollowSubscriptionsCollection().insertOne(followSubscriptionDocument);
   }
 
   private MongoCollection<Document> getFollowSubscriptionsCollection() {

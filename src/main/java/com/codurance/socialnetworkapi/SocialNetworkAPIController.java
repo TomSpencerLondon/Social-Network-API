@@ -63,6 +63,7 @@ public class SocialNetworkAPIController {
     if(follower.equals(followed)){
       throw new DuplicateFollowerException();
     }
+
     socialNetworkAPI.save(follower, followed);
   }
 
